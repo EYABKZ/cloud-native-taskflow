@@ -31,8 +31,27 @@ public class UserController {
         return userService.createUser(request);
     }
     // Get all users
-@GetMapping
-public List<UserResponse> getAllUsers() {
-    return userService.getAllUsers();
+     @GetMapping
+     public List<UserResponse> getAllUsers() {
+        return userService.getAllUsers();
+     }
+     // Get user by ID
+@GetMapping("/{id}")
+public UserResponse getUserById(@PathVariable Long id) {
+    return userService.getUserById(id);
+}
+// Update user
+@PutMapping("/{id}")
+public UserResponse updateUser(
+        @PathVariable Long id,
+        @Valid @RequestBody UserRequest request) {
+
+    return userService.updateUser(id, request);
+}
+// Delete user
+@DeleteMapping("/{id}")
+@ResponseStatus(HttpStatus.NO_CONTENT)
+public void deleteUser(@PathVariable Long id) {
+    userService.deleteUser(id);
 }
 }
