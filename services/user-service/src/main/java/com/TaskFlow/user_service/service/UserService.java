@@ -6,9 +6,9 @@ import com.TaskFlow.user_service.entity.User;
 import com.TaskFlow.user_service.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.TaskFlow.user_service.exception.UserNotFoundException;
 import java.util.List;
-
+import com.TaskFlow.user_service.exception.EmailAlreadyExistsException;
 @Service
 public class UserService {
 
@@ -22,8 +22,8 @@ public class UserService {
     public UserResponse createUser(UserRequest request) {
 
         if (userRepository.existsByEmail(request.email())) {
-            throw new IllegalArgumentException("Email already exists");
-        }
+    throw new EmailAlreadyExistsException("Email already exists");
+}
 
         User user = new User();
         user.setFirstName(request.firstName());
@@ -62,7 +62,7 @@ public class UserService {
     public UserResponse getUserById(Long id) {
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         return new UserResponse(
                 user.getId(),
@@ -78,11 +78,10 @@ public class UserService {
     public UserResponse updateUser(Long id, UserRequest request) {
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-        if (userRepository.existsByEmailAndIdNot(request.email(), id)) {
-            throw new IllegalArgumentException("Email already exists");
-        }
+.orElseThrow(() -> new UserNotFoundException("User not found"));
+       if (userRepository.existsByEmailAndIdNot(request.email(), id)) {
+    throw new EmailAlreadyExistsException("Email already exists");
+}
 
         user.setFirstName(request.firstName());
         user.setLastName(request.lastName());
@@ -104,8 +103,7 @@ public class UserService {
     public void deleteUser(Long id) {
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
+.orElseThrow(() -> new UserNotFoundException("User not found"));
         userRepository.delete(user);
     }
 }
