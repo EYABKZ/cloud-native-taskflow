@@ -1,5 +1,6 @@
-package com.TaskFlow.user_service.entity;
 
+package com.TaskFlow.user_service.entity;
+import com.TaskFlow.user_service.entity.UserStatus;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -20,12 +21,20 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private UserStatus status = UserStatus.ACTIVE;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
+
+        if (status == null) {
+            status = UserStatus.ACTIVE;
+        }
     }
 
     public User() {
@@ -63,7 +72,19 @@ public class User {
         this.email = email;
     }
 
+    public UserStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(UserStatus status) {
+        this.status = status;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

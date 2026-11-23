@@ -1,3 +1,4 @@
+
 services:
   user-db:
     image: postgres:17
@@ -15,6 +16,21 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  user-service:
+    build:
+      context: ./services/user-service
+      dockerfile: Dockerfile
+    container_name: taskflow-user-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://user-db:5432/user_db
+      SPRING_DATASOURCE_USERNAME: taskflow
+      SPRING_DATASOURCE_PASSWORD: taskflow_dev_password
+    ports:
+      - "8081:8081"
+    depends_on:
+      user-db:
+        condition: service_healthy
 
 volumes:
   user_db_data:
